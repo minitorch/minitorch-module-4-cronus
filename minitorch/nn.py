@@ -36,10 +36,35 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     assert height % kh == 0
     assert width % kw == 0
     # TODO: Implement for Task 4.3.
-    raise NotImplementedError("Need to implement for Task 4.3")
+    #raise NotImplementedError("Need to implement for Task 4.3")
+
+    print(input._tensor.is_contiguous())
+    print(input._tensor.strides)
+
+    new_height = height / kh
+    new_width  = width / kw
+    output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw * kh)
+    return tuple([output_tensor, new_height, new_width])
 
 
 # TODO: Implement for Task 4.3.
 def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     
-    new_tensor, new_h, new_w = tile(input, kernel)
+    batch, channel, _, _ = input.shape
+
+    tiled_tensor, new_h, new_w = tile(input, kernel)
+    out_tensor = tiled_tensor.mean(4).view(batch, channel, new_h, new_w)
+
+    print("input:")
+    print(input._tensor.to_string())
+    print(input.shape)
+    print(kernel)
+    print("tiled:")
+    print(tiled_tensor._tensor.to_string())
+    print(tiled_tensor.shape)
+    print("out:")
+    print(out_tensor._tensor.to_string())
+    print(out_tensor.shape)
+    return out_tensor
+
+
