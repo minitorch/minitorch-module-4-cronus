@@ -5,11 +5,61 @@ Be sure you have minitorch installed in you Virtual Env.
 
 import minitorch
 
-# Use this function to make a random parameter in
-# your module.
+
 def RParam(*shape):
     r = 2 * (minitorch.rand(shape) - 0.5)
     return minitorch.Parameter(r)
+
+
+class Network(minitorch.Module):
+    def __init__(self, hidden_layers):
+        super().__init__()
+
+        # Submodules
+        self.layer1 = Linear(2, hidden_layers)
+        self.layer2 = Linear(hidden_layers, hidden_layers)
+        self.layer3 = Linear(hidden_layers, 1)
+
+    def forward(self, x):
+        # TODO: Implement for Task 2.5.
+        #raise NotImplementedError("Need to implement for Task 2.5")
+        middle = self.layer1.forward(x).relu()
+        end    = self.layer2.forward(middle).relu()
+        return self.layer3.forward(end).sigmoid()
+
+
+class Linear(minitorch.Module):
+    def __init__(self, in_size, out_size):
+        super().__init__()
+        self.weights = RParam(in_size, out_size)
+        self.bias = RParam(out_size)
+        self.out_size = out_size
+
+    def forward(self, x):
+        # TODO: Implement for Task 2.5.
+        #raise NotImplementedError("Need to implement for Task 2.5")
+        in_size  = self.weights.value.shape[0]
+        out_size = self.weights.value.shape[1]
+        pts      = x.shape[0]
+        #print("in_size: " + str(in_size))
+        #print("out_size: " + str(out_size))
+        #print("Linear forward:")
+        #print("bias:")
+        #print(self.bias.value)
+        #print(self.bias.value.shape)
+        #print("weights:")
+        #print(self.weights.value)
+        #print(self.weights.value.shape)
+        #print("x:")
+        #print(x)
+        #print(x.shape)
+        #print(((self.weights.value.view(1, in_size, out_size)) * x.view(50,in_size,1)))
+        #print(((self.weights.value.view(1, in_size, out_size)) * x.view(50,in_size,1)).shape)
+        #print(((self.weights.value.view(1, in_size, out_size)) * x.view(50,in_size,1)).sum(1))
+        #print(((self.weights.value.view(1, in_size, out_size)) * x.view(50,in_size,1)).sum(1).shape)
+        #print(((self.weights.value.view(1, in_size, out_size)) * x.view(50,in_size,1)).sum(1).view(50,out_size))
+        #print(((self.weights.value.view(1, in_size, out_size)) * x.view(50,in_size,1)).sum(1).view(50,out_size).shape)
+        return ((self.weights.value.view(1, in_size, out_size)) * x.view(pts,in_size,1)).sum(1).view(pts, out_size) + self.bias.value.view(1, out_size)
 
 
 def default_log_fn(epoch, total_loss, correct, losses):
@@ -28,6 +78,7 @@ class TensorTrain:
         return self.model.forward(minitorch.tensor(X))
 
     def train(self, data, learning_rate, max_epochs=500, log_fn=default_log_fn):
+
         self.learning_rate = learning_rate
         self.max_epochs = max_epochs
         self.model = Network(self.hidden_layers)
