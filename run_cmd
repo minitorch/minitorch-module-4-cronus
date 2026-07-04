@@ -1,0 +1,1 @@
+NUMBA_DISABLE_JIT=1 pytest tests/test_conv.py::test_conv1d_simple
