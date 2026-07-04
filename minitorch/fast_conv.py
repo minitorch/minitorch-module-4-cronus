@@ -270,7 +270,41 @@ def _tensor_conv2d(
     s20, s21, s22, s23 = s2[0], s2[1], s2[2], s2[3]
 
     # TODO: Implement for Task 4.2.
-    raise NotImplementedError("Need to implement for Task 4.2")
+    #raise NotImplementedError("Need to implement for Task 4.2")
+    if not reverse:
+        for b in range(batch):
+            for ch_out in range(out_channels):
+                for i in range(out_shape[2]):
+                    for j in range(out_shape[3]):
+                        out_index         = np.array([b, ch_out, i, j])
+                        out_position      = index_to_position(out_index, out_strides)
+                        out[out_position] = 0
+                        for ch_in in range(in_channels):
+                            for m in range(kh):
+                                for n in range(kw):
+                                    if (i + m < height and j + n < width):
+                                        input_index        = np.array([b, ch_in, (i + m), (j + n)])
+                                        weight_index       = np.array([ch_out, ch_in, m, n])
+                                        in_position        = index_to_position(input_index, s1)
+                                        weight_position    = index_to_position(weight_index, s2)
+                                        out[out_position] += input[in_position] * weight[weight_position] 
+    else:
+        for b in range(batch):
+            for ch_out in range(out_channels):
+                for i in range(out_shape[2] - 1, -1, -1):
+                    for j in range(out_shape[3] - 1, -1, -1):
+                        out_index         = np.array([b, ch_out, i, j])
+                        out_position      = index_to_position(out_index, out_strides)
+                        out[out_position] = 0
+                        for ch_in in range(in_channels):
+                            for m in range(kh):
+                                for n in range(kw):
+                                    if (i -m >= 0 and j - n >= 0):
+                                        input_index        = np.array([b, ch_in, (i - m), (j - n)])
+                                        weight_index       = np.array([ch_out, ch_in, m, n])
+                                        in_position        = index_to_position(input_index, s1)
+                                        weight_position    = index_to_position(weight_index, s2)
+                                        out[out_position] += input[in_position] * weight[weight_position] 
 
 
 tensor_conv2d = njit(_tensor_conv2d, parallel=True, fastmath=True)
