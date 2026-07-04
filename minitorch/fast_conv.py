@@ -91,7 +91,53 @@ def _tensor_conv1d(
     s2 = weight_strides
 
     # TODO: Implement for Task 4.1.
-    raise NotImplementedError("Need to implement for Task 4.1")
+    #raise NotImplementedError("Need to implement for Task 4.1")
+    if not reverse:
+        #print("not reverse:")
+        #print("input:")
+        #print(input)
+        #print("weight:")
+        #print(weight)
+        for b in range(batch):
+            for ch_out in range(out_channels):
+                for i in range(out_width):
+                    out_index         = np.array([b, ch_out, i])
+                    out_position      = index_to_position(out_index, out_strides)
+                    out[out_position] = 0
+                    for ch_in in range(in_channels):
+                        for j in range(kw):
+                            if (i + j < width):
+                                input_index        = np.array([b, ch_in, (i + j)])
+                                weight_index       = np.array([ch_out, ch_in, j])
+                                in_position        = index_to_position(input_index, s1)
+                                weight_position    = index_to_position(weight_index, s2)
+                                out[out_position] += input[in_position] * weight[weight_position] 
+        #print("out:")
+        #print(out)
+        #print("end not reverse:")
+    else:
+        #print("reverse:")
+        #print("input:")
+        #print(input)
+        #print("weight:")
+        #print(weight)
+        for b in range(batch):
+            for ch_out in range(out_channels):
+                for i in range(out_width - 1, -1, -1):
+                    out_index         = np.array([b, ch_out, i])
+                    out_position      = index_to_position(out_index, out_strides)
+                    out[out_position] = 0
+                    for ch_in in range(in_channels):
+                        for j in range(kw):
+                            if (i - j >= 0):
+                                input_index        = np.array([b, ch_in, (i - j)])
+                                weight_index       = np.array([ch_out, ch_in, j])
+                                in_position        = index_to_position(input_index, s1)
+                                weight_position    = index_to_position(weight_index, s2)
+                                out[out_position] += input[in_position] * weight[weight_position] 
+        #print("out:")
+        #print(out)
+        #print("end reverse:")
 
 
 tensor_conv1d = njit(_tensor_conv1d, parallel=True)
@@ -113,6 +159,7 @@ class Conv1dFun(Function):
             batch x out_channel x h x w
 
         """
+        #print("enter Conv1dFun forward:")
         ctx.save_for_backward(input, weight)
         batch, in_channels, w = input.shape
         out_channels, in_channels2, kw = weight.shape
@@ -123,10 +170,12 @@ class Conv1dFun(Function):
         tensor_conv1d(
             *output.tuple(), output.size, *input.tuple(), *weight.tuple(), False
         )
+        #print("exit Conv1dFun forward:")
         return output
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
+        #print("enter Conv1dFun backward:")
         input, weight = ctx.saved_values
         batch, in_channels, w = input.shape
         out_channels, in_channels, kw = weight.shape
@@ -151,6 +200,7 @@ class Conv1dFun(Function):
             *new_weight.tuple(),
             True,  # type: ignore
         )
+        #print("exit Conv1dFun backward:")
         return grad_input, grad_weight
 
 
