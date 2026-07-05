@@ -43,7 +43,8 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
 
     new_height = height / kh
     new_width  = width / kw
-    output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw * kh)
+    #output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw * kh)
+    output_tensor = input.contiguous().view(batch, channel, new_height * new_width * kw, kh)#.contiguous().view(batch, channel, new_height, new_width, kw * kh)
     return tuple([output_tensor, new_height, new_width])
 
 
@@ -53,7 +54,7 @@ def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     batch, channel, _, _ = input.shape
 
     tiled_tensor, new_h, new_w = tile(input, kernel)
-    out_tensor = tiled_tensor.mean(4).view(batch, channel, new_h, new_w)
+    #out_tensor = tiled_tensor.mean(4).view(batch, channel, new_h, new_w)
 
     print("input:")
     print(input._tensor.to_string())
@@ -62,9 +63,28 @@ def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     print("tiled:")
     print(tiled_tensor._tensor.to_string())
     print(tiled_tensor.shape)
-    print("out:")
-    print(out_tensor._tensor.to_string())
-    print(out_tensor.shape)
-    return out_tensor
+    #print("out:")
+    #print(out_tensor._tensor.to_string())
+    #print(out_tensor.shape)
+    #return out_tensor
+
+def argmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
+    raise NotImplementedError("Need to implement for Task 4.4")
+
+def max() -> Tensor:
+    raise NotImplementedError("Need to implement for Task 4.4")
+    
+def softmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
+    raise NotImplementedError("Need to implement for Task 4.4")
+
+def logsoftmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
+    raise NotImplementedError("Need to implement for Task 4.4")
+
+def maxpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
+    raise NotImplementedError("Need to implement for Task 4.4")
+
+def dropout(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
+    raise NotImplementedError("Need to implement for Task 4.4")
+    
 
 
