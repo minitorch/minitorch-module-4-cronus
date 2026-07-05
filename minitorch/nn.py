@@ -44,7 +44,7 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     new_height = height / kh
     new_width  = width / kw
     #output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw * kh)
-    output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw, kh)#.contiguous()#.view(batch, channel, new_height, new_width, kw * kh)
+    output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kh, kw)#.contiguous()#.view(batch, channel, new_height, new_width, kw * kh)
 
     print("input:")
     print(input._tensor.to_string())
@@ -54,7 +54,7 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     print(output_tensor._tensor.to_string())
     print(output_tensor.shape)
 
-    output_tensor2 = input.contiguous().view(batch, channel, new_height, new_width, kw, kh).permute(0,1,2,4,3,5).contiguous().view(batch, channel, new_height, new_width, kw * kh)
+    output_tensor2 = input.contiguous().view(batch, channel, new_height, new_width, kh, kw).permute(0,1,2,4,3,5).contiguous().view(batch, channel, new_height, new_width, kh * kw)
     print(output_tensor2._tensor.to_string())
     print(output_tensor2.shape)
 
