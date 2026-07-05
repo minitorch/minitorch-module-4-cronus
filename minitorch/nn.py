@@ -44,7 +44,7 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     new_height = height / kh
     new_width  = width / kw
     #output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw * kh)
-    output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw, kh)#.contiguous().view(batch, channel, new_height, new_width, kw * kh)
+    output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw, kh)#.contiguous()#.view(batch, channel, new_height, new_width, kw * kh)
 
     print("input:")
     print(input._tensor.to_string())
@@ -54,7 +54,11 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     print(output_tensor._tensor.to_string())
     print(output_tensor.shape)
 
-    return tuple([output_tensor, new_height, new_width])
+    output_tensor2 = input.contiguous().view(batch, channel, new_height, new_width, kw, kh).permute(0,1,2,4,3,5).contiguous().view(batch, channel, new_height, new_width, kw * kh)
+    print(output_tensor2._tensor.to_string())
+    print(output_tensor2.shape)
+
+    return tuple([output_tensor2, new_height, new_width])
 
 
 # TODO: Implement for Task 4.3.
@@ -63,7 +67,7 @@ def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     batch, channel, _, _ = input.shape
 
     tiled_tensor, new_h, new_w = tile(input, kernel)
-    out_tensor = tiled_tensor.mean(-1).view(batch, channel, new_h, new_w)
+    out_tensor = tiled_tensor.mean(4).view(batch, channel, new_h, new_w)
 
     #print("out:")
     #print(out_tensor._tensor.to_string())
