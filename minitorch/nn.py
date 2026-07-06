@@ -77,6 +77,15 @@ def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
 def argmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     raise NotImplementedError("Need to implement for Task 4.4")
 
+class Max(Function):
+    @staticmethod
+    def forward(ctx: Context, t1: Tensor) -> Tensor:
+        raise NotImplementedError("Need to implement for Task 4.4")
+
+    @staticmethod
+    def backward(ctx: Context, grad_output: Tensor) -> Tensor:
+        raise NotImplementedError("Need to implement for Task 4.4")
+
 def max() -> Tensor:
     raise NotImplementedError("Need to implement for Task 4.4")
     
