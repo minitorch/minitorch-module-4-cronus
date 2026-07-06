@@ -89,8 +89,12 @@ def logsoftmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
 def maxpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     raise NotImplementedError("Need to implement for Task 4.4")
 
-def dropout(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
-    raise NotImplementedError("Need to implement for Task 4.4")
+def dropout(input: Tensor, prob: float, ignore: bool = False) -> Tensor:
+    #raise NotImplementedError("Need to implement for Task 4.4")
+    
+    print(input.shape)
+    #height, weight = input.shape
+    return input
     
 
 
