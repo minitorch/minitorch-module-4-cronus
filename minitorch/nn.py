@@ -49,15 +49,13 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     print(input._tensor.to_string())
     print(input.shape)
     print(kernel)
-    print("tiled:")
-    print(output_tensor._tensor.to_string())
-    print(output_tensor.shape)
     
     if (kh > kw):
         output_tensor2 = input.contiguous().permute(0,1,3,2).contiguous().view(batch, channel, new_height, new_width, kw, kh).permute(0,1,2,4,3,5).contiguous().view(batch, channel, new_height, new_width, kh * kw)
     else:
         output_tensor2 = input.contiguous().contiguous().view(batch, channel, new_height, new_width, kh, kw).permute(0,1,2,4,3,5).contiguous().view(batch, channel, new_height, new_width, kh * kw)
 
+    print("tiled:")
     print(output_tensor2._tensor.to_string())
     print(output_tensor2.shape)
 
@@ -108,7 +106,12 @@ def logsoftmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     raise NotImplementedError("Need to implement for Task 4.4")
 
 def maxpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
-    raise NotImplementedError("Need to implement for Task 4.4")
+    batch, channel, _, _ = input.shape
+
+    tiled_tensor, new_h, new_w = tile(input, kernel)
+    out_tensor = max(tiled_tensor, 4).view(batch, channel, new_h, new_w)
+
+    return out_tensor
 
 def dropout(input: Tensor, prob: float, ignore: bool = False) -> Tensor:
     #raise NotImplementedError("Need to implement for Task 4.4")
