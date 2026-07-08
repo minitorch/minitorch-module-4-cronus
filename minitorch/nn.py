@@ -100,10 +100,19 @@ def max (t: Tensor, dim: Optional[int] = None) -> float:
 
     
 def softmax(input: Tensor, dim: int) -> Tensor:
-    raise NotImplementedError("Need to implement for Task 4.4")
+    #raise NotImplementedError("Need to implement for Task 4.4")
+    #print("Enter softmax:")
+    #print(input)
+    #print(dim)
+    #print(input.exp())
+    #print(input.exp().sum(dim))
+    #print(input.exp() / input.exp().sum(dim))
+    #print("Exit softmax")
+    return input.exp() / input.exp().sum(dim)
 
 def logsoftmax(input: Tensor, dim: int) -> Tensor:
-    raise NotImplementedError("Need to implement for Task 4.4")
+    #raise NotImplementedError("Need to implement for Task 4.4")
+    return input - input.exp().sum(dim).log()
 
 def maxpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     batch, channel, _, _ = input.shape

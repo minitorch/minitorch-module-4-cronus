@@ -43,13 +43,15 @@ def test_max(t: Tensor) -> None:
     #print(max(t.contiguous().view(t.size).to_numpy()))
     assert_close(max_value, max(t.contiguous().view(t.size).to_numpy()))
 
+    ## TODO
+    #minitorch.grad_check(lambda t: minitorch.max(t), t)
 
 @pytest.mark.task4_4
 @given(tensors(shape=(1, 1, 4, 4)))
 def test_max_pool(t: Tensor) -> None:
     out = minitorch.maxpool2d(t, (2, 2))
-    print(out)
-    print(t)
+    #print(out)
+    #print(t)
     assert_close(
         out[0, 0, 0, 0], max([t[0, 0, i, j] for i in range(2) for j in range(2)])
     )
@@ -89,6 +91,10 @@ def test_softmax(t: Tensor) -> None:
     x = q.sum(dim=1)
     assert_close(x[0, 0, 0, 0], 1.0)
 
+    #print("t:")
+    #print(t)
+    #print("q:")
+    #print(q)
     minitorch.grad_check(lambda a: minitorch.softmax(a, dim=2), t)
 
 
