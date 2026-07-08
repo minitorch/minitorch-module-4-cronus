@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 from . import operators
 from .autodiff import Context
@@ -79,26 +79,29 @@ def argmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
 
 class Max(Function):
     @staticmethod
-    def forward(ctx: Context, t: Tensor) -> Tensor:
+    def forward(ctx: Context, t: Tensor, dim: Tensor) -> Tensor:
         #raise NotImplementedError("Need to implement for Task 4.4")
         #print("Enter Max forward:")
-        ctx.save_for_backward(t)
+        ctx.save_for_backward(t, dim)
         max_reduce = FastOps.reduce(operators.max)
         #print(t._tensor._storage)
         #print(t.dims)
-        test = max_reduce(t.contiguous().view(t.size,1), 0)
+        test = max_reduce(t, int(dim.item()))
         #print(test)
-        return test.view(1,)
+        return test
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
         raise NotImplementedError("Need to implement for Task 4.4")
 
-def max (t: Tensor) -> float:
-    return Max.apply(t)[0]
+def max (t: Tensor, dim: Optional[int] = None) -> float:
+    if dim is None:
+        return Max.apply(t.contiguous().view(t.size), t._ensure_tensor(0))[0]
+    else:
+        return Max.apply(t, t._ensure_tensor(dim))
 
     
-def softmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
+def softmax(input: Tensor, dim: int) -> Tensor:
     raise NotImplementedError("Need to implement for Task 4.4")
 
 def logsoftmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:

@@ -39,7 +39,9 @@ def test_max(t: Tensor) -> None:
     max_value = minitorch.max(t)
     #print(t)
     #print(max_value)
-    assert_close(t, max(t.to_numpy()))
+    #print(t.contiguous().view(t.size).to_numpy())
+    #print(max(t.contiguous().view(t.size).to_numpy()))
+    assert_close(max_value, max(t.contiguous().view(t.size).to_numpy()))
 
 
 @pytest.mark.task4_4
