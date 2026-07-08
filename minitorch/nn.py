@@ -102,7 +102,7 @@ def max (t: Tensor, dim: Optional[int] = None) -> float:
 def softmax(input: Tensor, dim: int) -> Tensor:
     raise NotImplementedError("Need to implement for Task 4.4")
 
-def logsoftmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
+def logsoftmax(input: Tensor, dim: int) -> Tensor:
     raise NotImplementedError("Need to implement for Task 4.4")
 
 def maxpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
