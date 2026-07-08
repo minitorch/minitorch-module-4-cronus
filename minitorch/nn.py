@@ -79,15 +79,24 @@ def argmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
 
 class Max(Function):
     @staticmethod
-    def forward(ctx: Context, t1: Tensor) -> Tensor:
-        raise NotImplementedError("Need to implement for Task 4.4")
+    def forward(ctx: Context, t: Tensor) -> Tensor:
+        #raise NotImplementedError("Need to implement for Task 4.4")
+        #print("Enter Max forward:")
+        ctx.save_for_backward(t)
+        max_reduce = FastOps.reduce(operators.max)
+        #print(t._tensor._storage)
+        #print(t.dims)
+        test = max_reduce(t.contiguous().view(t.size,1), 0)
+        #print(test)
+        return test.view(1,)
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
         raise NotImplementedError("Need to implement for Task 4.4")
 
-def max() -> Tensor:
-    raise NotImplementedError("Need to implement for Task 4.4")
+def max (t: Tensor) -> float:
+    return Max.apply(t)[0]
+
     
 def softmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     raise NotImplementedError("Need to implement for Task 4.4")
