@@ -329,11 +329,14 @@ class Tensor:
             x : value to be accumulated
         """
         assert self.is_leaf(), "Only leaf variables can have derivatives."
+        print("Enter accu:")
+        print(x)
         if self.grad is None:
             self.grad = Tensor.make(
                 [0] * int(operators.prod(self.shape)), self.shape, backend=self.backend
             )
         self.grad += x
+        print("Exit accu:")
 
     def is_leaf(self) -> bool:
         "True if this variable created by the user (no `last_fn`)"
@@ -373,7 +376,6 @@ class Tensor:
             #print(inp)
             #print("d_in:")
             #print(d_in)
-            #print(self._ensure_tensor(d_in))
         return [
             (inp, inp.expand(self._ensure_tensor(d_in)))
             for inp, d_in in zip(h.inputs, x)

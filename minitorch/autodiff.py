@@ -99,10 +99,14 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     """
     # TODO: Implement for Task 1.4.
     #raise NotImplementedError("Need to implement for Task 1.4")
-    
+    #print("Enter backprop:")
+    #print(variable) 
+    #print("input deriv:")
+    #print(deriv)
     # dict for variable and derivatives
     variable.derivative = deriv
     for sorted_var in topological_sort(variable):
+        #print("sorted_var:")
         #print(sorted_var)
         if not sorted_var.is_constant():
             if (not sorted_var.is_leaf()):
@@ -115,6 +119,7 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
                         var.accumulate_derivative(local_deriv)
                     else:
                         var.derivative = local_deriv
+    #print("Exit backprop.")
             
 
 

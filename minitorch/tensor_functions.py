@@ -183,7 +183,7 @@ class Exp(Function):
         # TODO: Implement for Task 2.4.
         #raise NotImplementedError("Need to implement for Task 2.4")
         (t1,) = ctx.saved_tensors
-        return grad_output.f.exp_map(t1)
+        return grad_output * t1.f.exp_map(t1)
 
 
 class Sum(Function):
@@ -436,6 +436,7 @@ def grad_central_difference(
 
 
 def grad_check(f: Any, *vals: Tensor) -> None:
+    print("Enter grad_check:")
     for x in vals:
         x.requires_grad_(True)
         x.zero_grad_()
@@ -464,3 +465,4 @@ but was expecting derivative %f from central difference.
             1e-2,
             err_msg=err_msg % (f, vals, x.grad[ind], i, ind, check),
         )
+    print("Exit grad_check.")

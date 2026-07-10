@@ -108,7 +108,8 @@ def softmax(input: Tensor, dim: int) -> Tensor:
     #print(input.exp().sum(dim))
     #print(input.exp() / input.exp().sum(dim))
     #print("Exit softmax")
-    return input.exp() / input.exp().sum(dim)
+    y =  input.exp() / input.exp().sum(dim)
+    return y
 
 def logsoftmax(input: Tensor, dim: int) -> Tensor:
     #raise NotImplementedError("Need to implement for Task 4.4")
