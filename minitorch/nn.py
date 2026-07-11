@@ -109,15 +109,15 @@ class Max(Function):
     @staticmethod
     def forward(ctx: Context, t: Tensor, dim: Tensor) -> Tensor:
         #raise NotImplementedError("Need to implement for Task 4.4")
-        print("Enter Max forward:")
-        print(t[1])
+        #print("Enter Max forward:")
+        #print(t)
         ctx.save_for_backward(t, dim)
         max_reduce = FastOps.reduce(operators.max)
         #print(t._tensor._storage)
         #print(t.dims)
         test = max_reduce(t, int(dim.item()))
         #print(test)
-        print("Exit Max forward")
+        #print("Exit Max forward")
         return test
 
     @staticmethod
