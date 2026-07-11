@@ -425,13 +425,25 @@ def tensor(
 def grad_central_difference(
     f: Any, *vals: Tensor, arg: int = 0, epsilon: float = 1e-6, ind: UserIndex
 ) -> float:
+    #print("Enter grad central difference:")
+    #print(arg)
+    #print(ind)
+    #print(vals)
     x = vals[arg]
     up = zeros(x.shape)
     up[ind] = epsilon
     vals1 = [x if j != arg else x + up for j, x in enumerate(vals)]
     vals2 = [x if j != arg else x - up for j, x in enumerate(vals)]
+    #print(vals1[0][ind])
+    #print(vals2[0][ind])
     delta: Tensor = f(*vals1).sum() - f(*vals2).sum()
 
+    #print("fvals1:")
+    #print(f(*vals1).sum().item())
+    #print("fvals2:")
+    #print(f(*vals2).sum().item())
+    #print(delta[0])
+    #print("Exit grad central difference:")
     return delta[0] / (2.0 * epsilon)
 
 
@@ -443,6 +455,8 @@ def grad_check(f: Any, *vals: Tensor) -> None:
     random.seed(10)
     out = f(*vals)
     out.sum().backward()
+    #print("val grad:")
+    #print(vals[0].grad)
     err_msg = """
 
 Gradient check error for function %s.
@@ -465,4 +479,4 @@ but was expecting derivative %f from central difference.
             1e-2,
             err_msg=err_msg % (f, vals, x.grad[ind], i, ind, check),
         )
-    #print("Exit grad_check.")
+    print("Exit grad_check.")

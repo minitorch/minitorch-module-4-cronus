@@ -75,9 +75,34 @@ def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
 def argmax (t: Tensor) -> Tensor:
     #raise NotImplementedError("Need to implement for Task 4.4")
     print("Enter argmax:")
+    print(str(t))
     one_hot = t.zeros()
-    print(one_hot)
-    one_hot[0, 1, 3] = 1
+    max_index = t._tensor.sample()
+    for i in t._tensor.indices():
+        #print("aaa")
+        #print(i)
+        #print(max_index)
+        #print(one_hot[i])
+        #print(one_hot[max_index])
+        #print("bbb")
+        if t[i] > t[max_index]:
+            print(t[max_index])
+            max_index = i
+            print("max_index1:")
+            print(t[i])
+            print(max_index)
+        
+    print("max_index2:")
+    print(max_index)
+    one_hot[max_index] = 1
+
+    for i in t._tensor.indices():
+        if t[i] == t[max_index]:
+            one_hot[i] = 1
+
+    print("max_index3:")
+    print(max_index)
+    print("Exit argmax")
     return one_hot
 
 class Max(Function):
@@ -85,22 +110,28 @@ class Max(Function):
     def forward(ctx: Context, t: Tensor, dim: Tensor) -> Tensor:
         #raise NotImplementedError("Need to implement for Task 4.4")
         print("Enter Max forward:")
-        print(t)
+        print(t[1])
         ctx.save_for_backward(t, dim)
         max_reduce = FastOps.reduce(operators.max)
         #print(t._tensor._storage)
         #print(t.dims)
         test = max_reduce(t, int(dim.item()))
         #print(test)
+        print("Exit Max forward")
         return test
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         #raise NotImplementedError("Need to implement for Task 4.4")
         t, dim = ctx.saved_values
-        print("Max backward:")
-        print(t)
-        return argmax(t) * grad_output, t.zeros()
+        one_hot = argmax(t)
+        #print("Max backward:")
+        #print(t)
+        #print(one_hot)
+        #if (one_hot.sum().item() > 1):
+        #    return 0.5 * one_hot * grad_output, 0.0
+        #else:
+        return one_hot * grad_output, 0.0
 
 def max (t: Tensor, dim: Optional[int] = None) -> Tensor:
     if dim is None:
