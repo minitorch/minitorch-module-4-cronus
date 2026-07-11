@@ -224,8 +224,14 @@ def encode_sentences(
 def encode_sentiment_data(dataset, pretrained_embeddings, N_train, N_val=0):
     #  Determine max sentence length for padding
     max_sentence_len = 0
-    for sentence in dataset["train"]["sentence"] + dataset["validation"]["sentence"]:
-        max_sentence_len = max(max_sentence_len, len(sentence.split()))
+    #for sentence in dataset["train"]["sentence"] + dataset["validation"]["sentence"]:
+    for sentence in dataset["train"].to_pandas()["sentence"] + dataset["validation"].to_pandas()["sentence"]:
+        #print(sentence)
+        max_sentence_len = max(max_sentence_len, len(str(sentence).split()))
+
+    #print(max_sentence_len)
+    #print(dataset["train"]["sentence"])
+    #print(dataset["validation"]["sentence"])
 
     unks = set()
     unk_embedding = [
