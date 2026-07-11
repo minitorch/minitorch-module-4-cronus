@@ -43,7 +43,6 @@ def test_max(t: Tensor) -> None:
     #print(max(t.contiguous().view(t.size).to_numpy()))
     assert_close(max_value, max(t.contiguous().view(t.size).to_numpy()))
 
-    #minitorch.grad_check(lambda a: minitorch.max(a), t)
 
 @pytest.mark.task4_4
 @given(tensors(shape=(1, 1, 4, 4)))
