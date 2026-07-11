@@ -72,14 +72,20 @@ def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
 
     return out_tensor
 
-def argmax(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
-    raise NotImplementedError("Need to implement for Task 4.4")
+def argmax (t: Tensor) -> Tensor:
+    #raise NotImplementedError("Need to implement for Task 4.4")
+    print("Enter argmax:")
+    one_hot = t.zeros()
+    print(one_hot)
+    one_hot[0, 1, 3] = 1
+    return one_hot
 
 class Max(Function):
     @staticmethod
     def forward(ctx: Context, t: Tensor, dim: Tensor) -> Tensor:
         #raise NotImplementedError("Need to implement for Task 4.4")
-        #print("Enter Max forward:")
+        print("Enter Max forward:")
+        print(t)
         ctx.save_for_backward(t, dim)
         max_reduce = FastOps.reduce(operators.max)
         #print(t._tensor._storage)
@@ -89,12 +95,16 @@ class Max(Function):
         return test
 
     @staticmethod
-    def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        raise NotImplementedError("Need to implement for Task 4.4")
+    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
+        #raise NotImplementedError("Need to implement for Task 4.4")
+        t, dim = ctx.saved_values
+        print("Max backward:")
+        print(t)
+        return argmax(t) * grad_output, t.zeros()
 
-def max (t: Tensor, dim: Optional[int] = None) -> float:
+def max (t: Tensor, dim: Optional[int] = None) -> Tensor:
     if dim is None:
-        return Max.apply(t.contiguous().view(t.size), t._ensure_tensor(0))[0]
+        return Max.apply(t.contiguous().view(t.size), t._ensure_tensor(0))
     else:
         return Max.apply(t, t._ensure_tensor(dim))
 

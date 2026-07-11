@@ -36,7 +36,7 @@ def test_avg(t: Tensor) -> None:
 def test_max(t: Tensor) -> None:
     # TODO: Implement for Task 4.4.
     #raise NotImplementedError("Need to implement for Task 4.4")
-    max_value = minitorch.max(t)
+    max_value = minitorch.max(t)[0]
     #print(t)
     #print(max_value)
     #print(t.contiguous().view(t.size).to_numpy())
@@ -44,7 +44,7 @@ def test_max(t: Tensor) -> None:
     assert_close(max_value, max(t.contiguous().view(t.size).to_numpy()))
 
     ## TODO
-    #minitorch.grad_check(lambda t: minitorch.max(t), t)
+    minitorch.grad_check(lambda t: minitorch.max(t), t)
 
 @pytest.mark.task4_4
 @given(tensors(shape=(1, 1, 4, 4)))
