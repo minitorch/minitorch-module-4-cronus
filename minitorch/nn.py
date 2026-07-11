@@ -38,26 +38,26 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     # TODO: Implement for Task 4.3.
     #raise NotImplementedError("Need to implement for Task 4.3")
 
-    print(input._tensor.is_contiguous())
-    print(input._tensor.strides)
+    #print(input._tensor.is_contiguous())
+    #print(input._tensor.strides)
 
     new_height = height / kh
     new_width  = width / kw
     #output_tensor = input.contiguous().view(batch, channel, new_height, new_width, kw * kh)
 
-    print("input:")
-    print(input._tensor.to_string())
-    print(input.shape)
-    print(kernel)
+    #print("input:")
+    #print(input._tensor.to_string())
+    #print(input.shape)
+    #print(kernel)
     
     if (kh > kw):
         output_tensor2 = input.contiguous().permute(0,1,3,2).contiguous().view(batch, channel, new_height, new_width, kw, kh).permute(0,1,2,4,3,5).contiguous().view(batch, channel, new_height, new_width, kh * kw)
     else:
         output_tensor2 = input.contiguous().contiguous().view(batch, channel, new_height, new_width, kh, kw).permute(0,1,2,4,3,5).contiguous().view(batch, channel, new_height, new_width, kh * kw)
 
-    print("tiled:")
-    print(output_tensor2._tensor.to_string())
-    print(output_tensor2.shape)
+    #print("tiled:")
+    #print(output_tensor2._tensor.to_string())
+    #print(output_tensor2.shape)
 
     return tuple([output_tensor2, new_height, new_width])
 
@@ -135,10 +135,26 @@ def maxpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
 
 def dropout(input: Tensor, prob: float, ignore: bool = False) -> Tensor:
     #raise NotImplementedError("Need to implement for Task 4.4")
-    
-    print(input.shape)
-    #height, weight = input.shape
-    return input
+    #print("Enter dropout:")
+    #print("prob:" + str(prob))
+    #print(input)
+    #print(input.shape)
+    out_tensor = input.zeros()
+    if(ignore):
+        for i in input._tensor.indices():
+            out_tensor[i] = input[i]
+    else:
+        rand_tensor = rand(input.shape)
+        #print("rand:")
+        #print(rand_tensor)
+        for i in rand_tensor._tensor.indices():
+            #print("i: " + str(i))
+            if(rand_tensor[i] < prob):
+                out_tensor[i] = 0
+            else:
+                out_tensor[i] = input[i]
+    #print("Exit dropout")
+    return out_tensor
     
 
 

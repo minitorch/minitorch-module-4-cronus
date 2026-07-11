@@ -436,7 +436,7 @@ def grad_central_difference(
 
 
 def grad_check(f: Any, *vals: Tensor) -> None:
-    print("Enter grad_check:")
+    #print("Enter grad_check:")
     for x in vals:
         x.requires_grad_(True)
         x.zero_grad_()
@@ -465,4 +465,4 @@ but was expecting derivative %f from central difference.
             1e-2,
             err_msg=err_msg % (f, vals, x.grad[ind], i, ind, check),
         )
-    print("Exit grad_check.")
+    #print("Exit grad_check.")
