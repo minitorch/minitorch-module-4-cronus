@@ -35,8 +35,9 @@ class Conv1d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
-        minitorch.Conv1dFunc.apply()
+        #raise NotImplementedError("Need to implement for Task 4.5")
+        output = minitorch.Conv1dFun.apply(input, self.weights.value)
+        return output + self.bias.value
 
 
 class CNNSentimentKim(minitorch.Module):
@@ -65,8 +66,13 @@ class CNNSentimentKim(minitorch.Module):
         # TODO: Implement for Task 4.5.
         #raise NotImplementedError("Need to implement for Task 4.5")
         self.embedding_size = embedding_size
-        self.filter_sizes   = filter_sizes
+        #self.filter_sizes   = filter_sizes
+        self.out_channel    = filter_sizes[0]
+        self.in_channel     = filter_sizes[1]
+        self.kernel_width   = filter_sizes[2]
         self.dropout        = dropout
+        self.conv1d         = Conv1d(self.embedding_size, self.feature_map_size, self.kernel_width)
+
 
     def forward(self, embeddings):
         """
@@ -74,9 +80,24 @@ class CNNSentimentKim(minitorch.Module):
         """
         # TODO: Implement for Task 4.5.
         #raise NotImplementedError("Need to implement for Task 4.5")
-        conv1d: Conv1D
-        cov1d.forward(embeddings)
+        print("embedding shape:")
+        print(embeddings.shape)
 
+        # CNN
+        cnn_layer = self.conv1d.forward(embeddings.permute(0, 2, 1))
+
+        # max-over-time pooling
+        #max_pooling_layer = minitorch.nn.
+
+        # Linear to size C
+        
+        # ReLU
+        relu_layer = cnn_layer.relu()
+
+        # Dropout
+        dropout_layer = minitorch.nn.dropout(relu_layer, 0.25)
+
+        return dropout_layer
 
 # Evaluation helper methods
 def get_predictions_array(y_true, model_output):
