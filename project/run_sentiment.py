@@ -66,12 +66,10 @@ class CNNSentimentKim(minitorch.Module):
         # TODO: Implement for Task 4.5.
         #raise NotImplementedError("Need to implement for Task 4.5")
         self.embedding_size = embedding_size
-        #self.filter_sizes   = filter_sizes
-        self.out_channel    = filter_sizes[0]
-        self.in_channel     = filter_sizes[1]
-        self.kernel_width   = filter_sizes[2]
+        self.filter_sizes   = filter_sizes
         self.dropout        = dropout
-        self.conv1d         = Conv1d(self.embedding_size, self.feature_map_size, self.kernel_width)
+        self.conv1d         = Conv1d(self.embedding_size, self.feature_map_size, self.filter_sizes[0])
+        self.linear         = Linear(self.feature_map_size, 1)
 
 
     def forward(self, embeddings):
@@ -80,22 +78,24 @@ class CNNSentimentKim(minitorch.Module):
         """
         # TODO: Implement for Task 4.5.
         #raise NotImplementedError("Need to implement for Task 4.5")
-        print("embedding shape:")
-        print(embeddings.shape)
-
+        #print("embedding shape:")
+        #print(embeddings.shape)
+        batch, sentence_length, embedding_dim = embeddings.shape
         # CNN
-        cnn_layer = self.conv1d.forward(embeddings.permute(0, 2, 1))
+        cnn_layer = self.conv1d.forward(embeddings.permute(0, 2, 1)).relu()
+        #print(cnn_layer.shape)
 
+        batch, feature_map_size, _ = cnn_layer.shape
         # max-over-time pooling
-        #max_pooling_layer = minitorch.nn.
+        max_pooling_layer = minitorch.nn.max(cnn_layer, 2).view(batch, feature_map_size)
+        #print(max_pooling_layer.shape)
 
         # Linear to size C
-        
-        # ReLU
-        relu_layer = cnn_layer.relu()
+        linear_layer = self.linear.forward(max_pooling_layer).sigmoid()
+        #print(linear_layer.shape)
 
         # Dropout
-        dropout_layer = minitorch.nn.dropout(relu_layer, 0.25)
+        dropout_layer = minitorch.nn.dropout(linear_layer, 0.25)
 
         return dropout_layer
 
