@@ -42,7 +42,8 @@ class Conv2d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        #raise NotImplementedError("Need to implement for Task 4.5")
+        return minitorch.Conv2dFun.apply(input, self.weights.value) + self.bias.value
 
 
 class Network(minitorch.Module):
@@ -68,12 +69,37 @@ class Network(minitorch.Module):
         self.out = None
 
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        #raise NotImplementedError("Need to implement for Task 4.5")
+        self.conv2d_1 = Conv2d(1, 4, 3, 3)
+        self.conv2d_2 = Conv2d(4, 8, 3, 3)
+        self.linear_1 = Linear(392, 64)
+        self.linear_2 = Linear(64, C)
 
     def forward(self, x):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        #raise NotImplementedError("Need to implement for Task 4.5")
 
+        # 1. Apply a convolution with 4 output channels and a 3x3 kernel followed by a ReLU (save to self.mid)
+        self.mid = self.conv2d_1.forward(x).relu()
+        #print(self.mid.shape)
+
+        # 2. Apply a convolution with 8 output channels and a 3x3 kernel followed by a ReLU (save to self.out)
+        self.out = self.conv2d_2.forward(self.mid).relu()
+        #print(self.out.shape)
+
+        # 3. Apply 2D pooling (either Avg or Max) with 4x4 kernel.
+        # 4. Flatten channels, height, and width. (Should be size BATCHx392)
+        # 392 = Hight x Weight * output channel / (pooling height x pooling width)
+        flatten_layer = minitorch.nn.maxpool2d(self.out, (4, 4)).view(BATCH, H * W * 8 / (4 * 4))
+
+        # 5. Apply a Linear to size 64 followed by a ReLU and Dropout with rate 25%
+        linear_layer1 = minitorch.nn.dropout(self.linear_1(flatten_layer).relu(), 0.25)
+
+        # 6. Apply a Linear to size C (number of classes).
+        linear_layer2 = self.linear_2(linear_layer1)
+
+        # 7. Apply a logsoftmax over the class dimension.
+        return minitorch.nn.logsoftmax(linear_layer2, 1)
 
 def make_mnist(start, stop):
     ys = []

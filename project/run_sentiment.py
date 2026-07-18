@@ -35,7 +35,9 @@ class Conv1d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        #raise NotImplementedError("Need to implement for Task 4.5")
+        output = minitorch.Conv1dFun.apply(input, self.weights.value)
+        return output + self.bias.value
 
 
 class CNNSentimentKim(minitorch.Module):
@@ -62,15 +64,40 @@ class CNNSentimentKim(minitorch.Module):
         super().__init__()
         self.feature_map_size = feature_map_size
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        #raise NotImplementedError("Need to implement for Task 4.5")
+        self.embedding_size = embedding_size
+        self.filter_sizes   = filter_sizes
+        self.dropout        = dropout
+        self.conv1d         = Conv1d(self.embedding_size, self.feature_map_size, self.filter_sizes[0])
+        self.linear         = Linear(self.feature_map_size, 1)
+
 
     def forward(self, embeddings):
         """
         embeddings tensor: [batch x sentence length x embedding dim]
         """
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        #raise NotImplementedError("Need to implement for Task 4.5")
+        #print("embedding shape:")
+        #print(embeddings.shape)
+        batch, sentence_length, embedding_dim = embeddings.shape
+        # CNN
+        cnn_layer = self.conv1d.forward(embeddings.permute(0, 2, 1)).relu()
+        #print(cnn_layer.shape)
 
+        batch, feature_map_size, _ = cnn_layer.shape
+        # max-over-time pooling
+        max_pooling_layer = minitorch.nn.max(cnn_layer, 2).view(batch, feature_map_size)
+        #print(max_pooling_layer.shape)
+
+        # Linear to size C
+        linear_layer = self.linear.forward(max_pooling_layer).sigmoid()
+        #print(linear_layer.shape)
+
+        # Dropout
+        dropout_layer = minitorch.nn.dropout(linear_layer, 0.25)
+
+        return dropout_layer
 
 # Evaluation helper methods
 def get_predictions_array(y_true, model_output):
@@ -224,8 +251,14 @@ def encode_sentences(
 def encode_sentiment_data(dataset, pretrained_embeddings, N_train, N_val=0):
     #  Determine max sentence length for padding
     max_sentence_len = 0
-    for sentence in dataset["train"]["sentence"] + dataset["validation"]["sentence"]:
-        max_sentence_len = max(max_sentence_len, len(sentence.split()))
+    #for sentence in dataset["train"]["sentence"] + dataset["validation"]["sentence"]:
+    for sentence in dataset["train"].to_pandas()["sentence"] + dataset["validation"].to_pandas()["sentence"]:
+        #print(sentence)
+        max_sentence_len = max(max_sentence_len, len(str(sentence).split()))
+
+    #print(max_sentence_len)
+    #print(dataset["train"]["sentence"])
+    #print(dataset["validation"]["sentence"])
 
     unks = set()
     unk_embedding = [

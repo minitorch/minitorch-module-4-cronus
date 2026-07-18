@@ -11,6 +11,9 @@ from .tensor_strategies import tensors
 @pytest.mark.task4_3
 @given(tensors(shape=(1, 1, 4, 4)))
 def test_avg(t: Tensor) -> None:
+
+    #tm = minitorch.Tensor.make([0.00, 0.00, 1.50, 1.10, 1.90, 99.00, 0.00, 0.00, 0.00, 0.00, -0.00, -0.00, -0.00, -0.00, -0.00, -0.00], (1, 1, 4, 4), (16, 16, 4, 1), t.backend)
+
     out = minitorch.avgpool2d(t, (2, 2))
     assert_close(
         out[0, 0, 0, 0], sum([t[0, 0, i, j] for i in range(2) for j in range(2)]) / 4.0
@@ -32,15 +35,21 @@ def test_avg(t: Tensor) -> None:
 @given(tensors(shape=(2, 3, 4)))
 def test_max(t: Tensor) -> None:
     # TODO: Implement for Task 4.4.
-    raise NotImplementedError("Need to implement for Task 4.4")
+    #raise NotImplementedError("Need to implement for Task 4.4")
+    max_value = minitorch.max(t)[0]
+    #print(t)
+    #print(max_value)
+    #print(t.contiguous().view(t.size).to_numpy())
+    #print(max(t.contiguous().view(t.size).to_numpy()))
+    assert_close(max_value, max(t.contiguous().view(t.size).to_numpy()))
 
 
 @pytest.mark.task4_4
 @given(tensors(shape=(1, 1, 4, 4)))
 def test_max_pool(t: Tensor) -> None:
     out = minitorch.maxpool2d(t, (2, 2))
-    print(out)
-    print(t)
+    #print(out)
+    #print(t)
     assert_close(
         out[0, 0, 0, 0], max([t[0, 0, i, j] for i in range(2) for j in range(2)])
     )
@@ -80,6 +89,10 @@ def test_softmax(t: Tensor) -> None:
     x = q.sum(dim=1)
     assert_close(x[0, 0, 0, 0], 1.0)
 
+    #print("t:")
+    #print(t)
+    #print("q:")
+    #print(q)
     minitorch.grad_check(lambda a: minitorch.softmax(a, dim=2), t)
 
 
